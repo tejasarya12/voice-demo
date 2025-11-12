@@ -1,15 +1,37 @@
 import asyncio
 from dotenv import load_dotenv
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+
 
 from livekit import agents
 from livekit.agents import AgentSession, Agent, JobContext
 from livekit.plugins import silero
-from livekit.plugins import transformers as hf_transformers
+from livekit.plugins import langchain as lc_plugin
 
 load_dotenv()
 
+
+#LangChain LLM 
+
+MODEL_PATH = "/path/to/your/deepseek-model"  
+DEVICE = "cuda"  
+
+llm = lc_plugin.LangChainLLM(
+    model_path=MODEL_PATH,
+    device=DEVICE,
+    dtype=torch.float16 if DEVICE == "cuda" else torch.float32,
+    trust_remote_code=True,
+)
+
+
+
+
+
+
+
+
+
+'''
 # DeepSeek LLM setup
 
 MODELS = {
@@ -56,7 +78,7 @@ processor.chat_template = (
 
 llm = hf_transformers.LLM(processor=processor)
 
-
+'''
 
 
 
