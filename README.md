@@ -3,8 +3,42 @@ try to run voice agent using local llm
 
 1.]Install dependencies
 
-pip install "livekit-agents[silero,cartesia,turn-detector]~=1.0"
-pip install livekit-plugins-transformers accelerate
+---env activate part
+
+
+
+a.activate a virtual environment:
+
+py -3.10 -m venv livekit-env
+.\livekit-env\Scripts\activate
+
+
+b. version inside venv:
+
+python --version 
+
+
+c.Upgrade pip, setuptools, wheel:
+
+pip install --upgrade pip setuptools wheel
+
+
+
+----env end part
+
+pip install "livekit-agents[silero,langchain,cartesia,turn-detector]~=1.0"
+
+pip install "git+https://github.com/livekit/agents.git#egg=livekit-plugins-langchain&subdirectory=plugins/langchain"
+
+pip install "git+https://github.com/livekit/agents.git#egg=livekit-plugins-transformers&subdirectory=plugins/transformers"
+
+pip install accelerate
+
+
+python -c "import livekit.agents; import livekit.plugins.silero; import livekit.plugins.langchain; print('All good!')"
+
+
+livekit-plugins-langchain
 pip install transformers torch python-dotenv
 pip install git+https://github.com/snakers4/silero-models#egg=silero
 pip install TTS sounddevice
