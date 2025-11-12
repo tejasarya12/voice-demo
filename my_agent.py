@@ -6,20 +6,20 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from livekit import agents
 from livekit.agents import AgentSession, Agent, JobContext
 from livekit.plugins import silero
+from livekit.plugins import transformers as hf_transformers
 
 load_dotenv()
 
-# ------------------------------
 # DeepSeek LLM setup
-# ------------------------------
+
 MODELS = {
     "llm": {
-        "model_path": "/path/to/your/deepseek-model",  # <-- update this
-        "device": "cuda"  # or "cpu"
+        "model_path": "/path/to/your/deepseek-model", 
+        "device": "cuda"  
     }
 }
 
-quantization_config = None  # Optional: Add if you want quantized weights
+quantization_config = None  
 
 # Load model
 model = AutoModelForCausalLM.from_pretrained(
@@ -37,23 +37,43 @@ tokenizer = AutoTokenizer.from_pretrained(
     trust_remote_code=True
 )
 
-# ------------------------------
-# Silero STT & TTS setup
-# ------------------------------
+
+
+processor = hf_transformers.ChatProcessor(model=model, tokenizer=tokenizer)
+
+# This is  DeepSeek template
+processor.chat_template = (
+    "{% for message in messages %}"
+    "{% if message['role'] == 'user' %}"
+    "user: {{ message['content'] }}\n\n"
+    "{% elif message['role'] == 'assistant' %}"
+    "assistant: {{ message['content'] }}\n\n"
+    "{% endif %}"
+    "{% endfor %}"
+    "assistant:"
+)
+
+
+llm = hf_transformers.LLM(processor=processor)
+
+
+
+
+
 vad = silero.VAD.load()
 stt = silero.STT.load()
 tts = silero.TTS.load()
 
-# ------------------------------
-# Entrypoint for LiveKit agent
-# ------------------------------
+
+
+
 async def entrypoint(ctx: agents.JobContext):
     await ctx.connect()
 
     session = AgentSession(
         vad=vad,
         stt=stt,
-        llm=model,  # DeepSeek LLM
+        llm=llm,  
         tts=tts
     )
 
@@ -61,7 +81,7 @@ async def entrypoint(ctx: agents.JobContext):
 
     await session.start(room=ctx.room, agent=agent)
 
-    # Example greeting
+ 
     await session.generate_reply(
         instructions="Greet the user and offer assistance."
     )
