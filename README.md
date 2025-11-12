@@ -38,7 +38,7 @@ pip install accelerate
 python -c "import livekit.agents; import livekit.plugins.silero; import livekit.plugins.langchain; print('All good!')"
 
 
-livekit-plugins-langchain
+pip install livekit-plugins-langchain
 pip install transformers torch python-dotenv
 pip install git+https://github.com/snakers4/silero-models#egg=silero
 pip install TTS sounddevice
